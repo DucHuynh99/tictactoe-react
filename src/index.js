@@ -4,6 +4,6 @@ import Game from './Game'
 import './index.css';
 
 ReactDOM.render(
-    <Game />,
+    <Game size={4} />,
     document.getElementById('root')
 )
