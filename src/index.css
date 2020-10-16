@@ -1,5 +1,5 @@
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+  font: 14px "Time New Roman", Futura, sans-serif;
   margin: 20px;
 }
 
@@ -37,7 +37,7 @@ ol, ul {
 }
 
 .square-highlight{
-  background: lime;
+  background: limegreen;
   border: 1px solid #999;
   float: left;
   font-size: 24px;
@@ -65,10 +65,15 @@ ol, ul {
 }
 
 .button-highlight{
-  background: skyblue;
+  background: limegreen;
   font-weight: bolder;
 }
 
 .toogleButton{
   margin-top: 10px;
+}
+
+.form{
+  margin-top: 10px;
+  margin-bottom: 10px;
 }

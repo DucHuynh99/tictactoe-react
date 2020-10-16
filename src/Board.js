@@ -1,39 +1,31 @@
 import React from 'react'
 import Square from './Square'
 
-class Board extends React.Component {
+const renderSquare = (i, squares, winSquares, onClick) => {
+    const squareClass = winSquares && Array.from(winSquares).includes(i) ?
+        `square-highlight` :
+        `square`;
+    return (
+        <Square
+            key={i}
+            className={squareClass}
+            value={squares[i]}
+            onClick={() => onClick(i)}
+        />
+    );
+}
 
-    renderSquare(i) {
-        const winsquares = this.props.winSquares;
-        const squareClass = winsquares && Array.from(winsquares).includes(i) ?
-            `square-highlight` :
-            `square`;
-        return (
-            <Square
-                key={i}
-                className={squareClass}
-                value={this.props.squares[i]}
-                onClick={() => this.props.onClick(i)}
-            />
-        );
-    }
-
-    renderBoard(size) {
-        const board = [];
-        let count = 0;
-        for (let i = 0; i < size; i++) {
-            const row = [];
-            for (let j = 0; j < size; j++) {
-                row.push(this.renderSquare(count++));
-            }
-            board.push(<div key={i} className="board-row">{row}</div>);
+const Board = ({ size, squares, winSquares, onClick }) => {
+    const board = []
+    let count = 0
+    for (let i = 0; i < size; i++) {
+        const row = []
+        for (let j = 0; j < size; j++) {
+            row.push(renderSquare(count++, squares, winSquares, onClick))
         }
-        return (<div>{board}</div>);
+        board.push(<div key={i} className="board-row">{row}</div>)
     }
-
-    render() {
-        return this.renderBoard(this.props.size);
-    }
+    return <div>{board}</div>
 }
 
 export default Board

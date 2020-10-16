@@ -1,114 +1,99 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Board from './Board'
 import ToogleButton from './ToogleButton'
 
-class Game extends React.Component {
+function Game({ size }) {
+    const [history, setHistory] = useState([{ squares: Array(size * size).fill(null) }]);
+    const [displayHistoryAscending, setDisplayStyle] = useState(true);
+    const [stepNumber, setStepNumber] = useState(0);
+    const [xIsNext, setXIsNext] = useState(true);
 
-    constructor(props) {
-        super(props);
-        const totalSquareCount = Math.pow(this.props.size, 2);
-        this.state = {
-            history: [
-                { squares: Array(totalSquareCount).fill(null) }
-            ],
-            displayHistoryAscending: true,
-            stepNumber: 0,
-            xIsNext: true
-        };
-    }
 
-    handleClick(i) {
-        const history = this.state.history.slice(0, this.state.stepNumber + 1);
-        const current = history[history.length - 1];
-        const squares = current.squares.slice();
-        if (calculateWinner(squares, this.props.size) || squares[i]) return;
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-            history: history.concat([{
-                squares: squares,
-                location: this.getLocation(i, this.props.size)
-            }]),
-            stepNumber: history.length,
-            xIsNext: !this.state.xIsNext,
-        });
-    }
-
-    getLocation(index, size) {
+    const getLocation = (index, size) => {
         const X = Math.floor(index / size + 1);
         const Y = index % size + 1;
         return { X: X, Y: Y };
     }
 
-    jumpTo(step) {
-        this.setState({
-            stepNumber: step,
-            xIsNext: (step % 2) === 0
-        });
+    const handleClick = (i) => {
+        const history_copy = history.slice(0, stepNumber + 1);
+        const currentcopy = history_copy[history_copy.length - 1];
+        const squares = currentcopy.squares.slice();
+        if (calculateWinner(squares, size) || squares[i]) return;
+        squares[i] = xIsNext ? 'X' : 'O';
+        setHistory(history_copy.concat([{
+            squares: squares,
+            location: getLocation(i, size)
+        }]));
+        setStepNumber(history_copy.length);
+        setXIsNext(!xIsNext);
     }
 
-    changeHistoryOrder() {
-        this.setState({
-            displayHistoryAscending: !this.state.displayHistoryAscending
-        });
+    const jumpTo = (step) => {
+        setStepNumber(step)
+        setXIsNext((step % 2) === 0)
     }
 
-    render() {
-        const history = this.state.history;
-        const current = history[this.state.stepNumber];
-        const moves = history.map((step, move) => {
-            const locationInfo = move ?
-                `Đi ở ô (${history[move].location.X}, ${history[move].location.Y}) \t` :
-                ``;
-            const buttonDescription = move ?
-                `Khôi phục #${move}` :
-                `Xoá bàn cờ`;
-            const buttonClass = move === this.state.stepNumber ?
-                `button-highlight` :
-                '';
-            return (
-                <li key={move}>
-                    {locationInfo}
-                    <button
-                        className={buttonClass}
-                        onClick={() => this.jumpTo(move)}
-                    >
-                        {buttonDescription}
-                    </button>
-                </li>
-            );
-        });
+    const changeHistoryOrder = () => {
+        setDisplayStyle(!displayHistoryAscending)
+    }
 
-        const result = calculateWinner(current.squares, this.props.size);
-        let status;
-        let winSquares = [];
-        if (result && result.winner) {
-            status = `${result.winner} thắng!`;
-            winSquares = result.winSquares;
-        } else if (history.length - 1 === Math.pow(this.props.size, 2)) {
-            status = "Hoà"
-        } else {
-            status = `Đến lượt ${this.state.xIsNext ? 'X' : 'O'}`;
-        }
+    const current = history[stepNumber];
+    const moves = history.map((step, move) => {
+        const locationInfo = move ?
+            `Đi ở ô (${history[move].location.X}, ${history[move].location.Y}) \t` :
+            ``;
+        const buttonDescription = move ?
+            `Khôi phục #${move}` :
+            `Xoá bàn cờ`;
+        const buttonClass = move === stepNumber ?
+            `button-highlight` :
+            '';
         return (
-            <div className="game">
-                <div className="game-board">
-                    <Board
-                        size={this.props.size}
-                        squares={current.squares}
-                        winSquares={winSquares}
-                        onClick={(i) => this.handleClick(i)}
-                    />
-                </div>
-                <div className="game-info">
-                    <div>{status}</div>
-                    <div>
-                        <ToogleButton action={() => this.changeHistoryOrder()}></ToogleButton>
-                    </div>
-                    <ul>{this.state.displayHistoryAscending ? moves : moves.reverse()}</ul>
-                </div>
-            </div>
+            <li key={move}>
+                {locationInfo}
+                <button
+                    className={buttonClass}
+                    onClick={() => jumpTo(move)}
+                >
+                    {buttonDescription}
+                </button>
+            </li>
         );
+    });
+
+
+    const result = calculateWinner(current.squares, size);
+    let status;
+    let winSquares = [];
+    if (result && result.winner) {
+        status = `${result.winner} thắng!`;
+        winSquares = result.winSquares;
+    } else if (history.length - 1 === Math.pow(size, 2)) {
+        status = "Hoà"
+    } else {
+        status = `Đến lượt ${xIsNext ? 'X' : 'O'}`;
     }
+
+    return (
+        <div className="game">
+            <div className="game-board">
+                <Board
+                    size={size}
+                    squares={current.squares}
+                    winSquares={winSquares}
+                    onClick={(i) => handleClick(i)}
+                />
+            </div>
+            <div className="game-info">
+                <div>{status}</div>
+                <div>
+                    <ToogleButton action={() => changeHistoryOrder()}></ToogleButton>
+                </div>
+                <ul>{displayHistoryAscending ? moves : moves.reverse()}</ul>
+            </div>
+        </div>
+    )
 }
 
 function calculateWinner(squares, size) {
