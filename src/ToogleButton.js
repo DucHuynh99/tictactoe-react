@@ -1,28 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-class ToogleButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isAscending: true
-        }
+const ToogleButton = ({ action }) => {
+    const [isAscending, SetIsAscending] = useState();
+
+    const handleClick = () => {
+        action();
+        SetIsAscending(!isAscending);
     }
 
-    handleClick() {
-        this.props.action();
-        this.setState({
-            isAscending: !this.state.isAscending
-        })
-    }
-
-    render() {
-        return (<button
-            className='toogleButton'
-            onClick={() => this.handleClick()}
-        >
-            {this.state.isAscending ? "Nước đi mới dưới cùng" : "Nước đi mới trên cùng"}
-        </button>);
-    }
+    return (<button
+        className='toogleButton'
+        onClick={() => handleClick()}
+    >
+        {isAscending ? "Nước đi mới dưới cùng" : "Nước đi mới trên cùng"}
+    </button>);
 }
 
 export default ToogleButton

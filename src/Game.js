@@ -8,7 +8,6 @@ function Game({ size }) {
     const [stepNumber, setStepNumber] = useState(0);
     const [xIsNext, setXIsNext] = useState(true);
 
-
     const getLocation = (index, size) => {
         const X = Math.floor(index / size + 1);
         const Y = index % size + 1;
@@ -62,6 +61,69 @@ function Game({ size }) {
         );
     });
 
+    function calculateWinner(squares, size) {
+        //Kiểm tra hàng ngang
+        for (let i = 0; i < size; i++) {
+            const winRow = [];
+            for (let j = 0; j < size; j++) {
+                const index = i * size + j;
+                if (squares[index] && squares[index] === squares[i * size]) {
+                    winRow.push(index);
+                } else {
+                    break;
+                }
+            }
+            if (winRow.length === size) {
+                return { winner: squares[i * size], winSquares: winRow };
+            }
+        }
+
+        //Kiểm tra hàng dọc
+        for (let i = 0; i < size; i++) {
+            const winCol = [];
+            for (let j = 0; j < size; j++) {
+                const index = j * size + i;
+                if (squares[index] && squares[index] === squares[i]) {
+                    winCol.push(index);
+                } else {
+                    break;
+                }
+            }
+            if (winCol.length === size) {
+                return { winner: squares[i], winSquares: winCol };
+            }
+        }
+
+        //Kiểm tra chéo chính
+        const winDiag = [];
+        for (let i = 0; i < size; i++) {
+            const index = i * size + i;
+            if (squares[index] && squares[index] === squares[0]) {
+                winDiag.push(index);
+            } else {
+                break;
+            }
+        }
+        if (winDiag.length === size) {
+            return { winner: squares[0], winSquares: winDiag };
+        }
+
+        //Kiểm tra chéo phụ
+        const winDiag2 = [];
+        for (let i = 1; i <= size; i++) {
+            const index = i * (size - 1);
+            if (squares[index] && squares[index] === squares[size - 1]) {
+                winDiag2.push(index);
+            } else {
+                break;
+            }
+        }
+        if (winDiag2.length === size) {
+            return { winner: squares[size - 1], winSquares: winDiag2 };
+        }
+        return null;
+    }
+
 
     const result = calculateWinner(current.squares, size);
     let status;
@@ -94,70 +156,6 @@ function Game({ size }) {
             </div>
         </div>
     )
-}
-
-function calculateWinner(squares, size) {
-    //Kiểm tra hàng ngang
-    for (let i = 0; i < size; i++) {
-        const winRow = [];
-        for (let j = 0; j < size; j++) {
-            const index = i * size + j;
-            if (squares[index] && squares[index] === squares[i * size]) {
-                winRow.push(index);
-            } else {
-                break;
-            }
-        }
-        if (winRow.length === size) {
-            return { winner: squares[i * size], winSquares: winRow };
-        }
-    }
-
-    //Kiểm tra hàng dọc
-    for (let i = 0; i < size; i++) {
-        const winCol = [];
-        for (let j = 0; j < size; j++) {
-            const index = j * size + i;
-            if (squares[index] && squares[index] === squares[i]) {
-                winCol.push(index);
-            } else {
-                break;
-            }
-        }
-        if (winCol.length === size) {
-            return { winner: squares[i], winSquares: winCol };
-        }
-    }
-
-    //Kiểm tra chéo chính
-    const winDiag = [];
-    for (let i = 0; i < size; i++) {
-        const index = i * size + i;
-        if (squares[index] && squares[index] === squares[0]) {
-            winDiag.push(index);
-        } else {
-            break;
-        }
-    }
-    if (winDiag.length === size) {
-        return { winner: squares[0], winSquares: winDiag };
-    }
-
-    //Kiểm tra chéo phụ
-    const winDiag2 = [];
-    for (let i = 1; i <= size; i++) {
-        const index = i * (size - 1);
-        if (squares[index] && squares[index] === squares[size - 1]) {
-            winDiag2.push(index);
-        } else {
-            break;
-        }
-    }
-    if (winDiag2.length === size) {
-        return { winner: squares[size - 1], winSquares: winDiag2 };
-    }
-
-    return null;
 }
 
 export default Game

@@ -4,7 +4,7 @@ import Game from './Game'
 import './index.css';
 
 const MIN_BOARD_SIZE = 3;
-const MAX_BOARD_SIZE = 10;
+const MAX_BOARD_SIZE = 5;
 
 function App() {
     const [boardSize, setBoardSize] = useState(3);
@@ -16,7 +16,7 @@ function App() {
         <div>
             <form className="form">
                 <label for="size">Kích thước bàn cờ: </label>
-                <select id="size" onChange={(event) => setBoardSize(event.target.value)}>
+                <select id="size" onChange={(event) => setBoardSize(parseInt(event.target.value))}>
                     {options}
                 </select>
             </form>
